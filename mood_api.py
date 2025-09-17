@@ -192,7 +192,7 @@ async def health_check():
         "device": DEVICE
     }
 
-@app.post("/predict", response_model=PredictionResponse)
+@app.post("/predict_mood", response_model=PredictionResponse)
 async def predict_mood(input_data: TextInput):
     """Predict mood for a single text."""
     if not model or not tokenizer:
