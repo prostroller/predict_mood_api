@@ -1,4 +1,4 @@
-# .dockerignore
+# .dockerignore - Exclude everything not needed for production
 
 # Python
 __pycache__/
@@ -42,17 +42,14 @@ ENV/
 ehthumbs.db
 Thumbs.db
 
-# Project specific - already cleaned up
-logs/
-logs_*/
-
-# Documentation
-README.md
-*.md
-
 # Git
 .git/
 .gitignore
 
-# Test files (optional - remove if you don't want tests in production)
+# Test files and documentation - EXCLUDE from production
 test_api.py
+README.md
+*.md
+
+# Development files
+.dockerignore
