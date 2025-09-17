@@ -1,26 +1,29 @@
-# Multi-stage build for ultra-small image
+# Ultra-lightweight Docker build
 FROM python:3.10-slim as builder
 
 WORKDIR /build
 
-# Install build dependencies
+# Install minimal build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc g++ && \
     rm -rf /var/lib/apt/lists/*
 
-# Copy and install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir --user -r requirements.txt
+# Install PyTorch CPU-only first to avoid CUDA downloads
+RUN pip install --user torch==2.0.0+cpu --index-url https://download.pytorch.org/whl/cpu
 
-# Production stage - minimal base
+# Copy and install other dependencies
+COPY requirements.txt .
+RUN pip install --user transformers==4.21.0 fastapi==0.85.0 uvicorn==0.18.0 pydantic==1.10.2
+
+# Production stage
 FROM python:3.10-slim
 
 WORKDIR /app
 
-# Copy only the installed packages from builder stage
+# Copy Python packages from builder
 COPY --from=builder /root/.local /root/.local
 
-# Copy application code
+# Copy application files
 COPY mood_api_minimal.py .
 COPY model/ model/
 
@@ -28,11 +31,9 @@ COPY model/ model/
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser
 
-# Make sure scripts in .local are usable
+# Update PATH for user packages
 ENV PATH=/root/.local/bin:$PATH
 
-# Expose port
 EXPOSE 8000
 
-# Start the application with minimal API
 CMD ["python", "-m", "uvicorn", "mood_api_minimal:app", "--host", "0.0.0.0", "--port", "8000"]

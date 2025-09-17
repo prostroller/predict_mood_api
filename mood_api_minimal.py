@@ -15,7 +15,7 @@ DEVICE = "cpu"
 # FastAPI App
 app = FastAPI(title="Mood Detection API", version="1.0.0")
 
-# Pydantic Models
+# Pydantic Models - v1 compatible
 class TextInput(BaseModel):
     text: str
 

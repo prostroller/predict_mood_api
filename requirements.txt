@@ -1,6 +1,7 @@
-# Ultra-minimal requirements for Railway
-torch==2.0.0
-transformers==4.30.0
-fastapi==0.100.0
-uvicorn==0.22.0
-pydantic==2.0.0
+# Ultra-minimal requirements - CPU only, no CUDA
+--index-url https://download.pytorch.org/whl/cpu
+torch==2.0.0+cpu
+transformers==4.21.0
+fastapi==0.85.0
+uvicorn==0.18.0
+pydantic==1.10.2
