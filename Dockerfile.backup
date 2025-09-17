@@ -1,4 +1,4 @@
-# Ultra-minimal Dockerfile - Force complete rebuild v2
+# Ultra-minimal Dockerfile - Force complete rebuild v3
 FROM python:3.11-slim
 
 WORKDIR /app
@@ -6,12 +6,16 @@ WORKDIR /app
 # Install dependencies
 RUN pip install --no-cache-dir fastapi uvicorn pydantic
 
-# Copy API file
+# Copy files
 COPY mood_api_dummy.py .
+COPY start.sh .
+
+# Make script executable
+RUN chmod +x start.sh
 
 # Set environment and run
 ENV PORT=8000
 EXPOSE 8000
 
-# Run directly with proper PORT handling
-CMD python mood_api_dummy.py
+# Use startup script to handle edge cases
+CMD ["./start.sh"]
