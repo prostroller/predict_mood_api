@@ -1,38 +1,38 @@
-# Dockerfile - Optimized for smaller image size
+# Multi-stage build for ultra-small image
+FROM python:3.10-slim as builder
 
+WORKDIR /build
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc g++ && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy and install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+# Production stage - minimal base
 FROM python:3.10-slim
 
-# Set working directory
 WORKDIR /app
 
-# Install only essential system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc \
-    g++ \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean
-
-# Copy requirements first for better caching
-COPY requirements.txt .
-
-# Install Python dependencies with optimizations
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt && \
-    pip cache purge
+# Copy only the installed packages from builder stage
+COPY --from=builder /root/.local /root/.local
 
 # Copy application code
-COPY . .
-
-# Remove unnecessary files to reduce image size
-RUN find /usr/local -name "*.pyc" -delete && \
-    find /usr/local -name "__pycache__" -type d -exec rm -rf {} + || true
+COPY mood_api_minimal.py .
+COPY model/ model/
 
 # Create non-root user
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser
 
+# Make sure scripts in .local are usable
+ENV PATH=/root/.local/bin:$PATH
+
 # Expose port
 EXPOSE 8000
 
 # Start the application with minimal API
-CMD ["uvicorn", "mood_api_minimal:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python", "-m", "uvicorn", "mood_api_minimal:app", "--host", "0.0.0.0", "--port", "8000"]

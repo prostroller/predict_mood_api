@@ -1,0 +1,26 @@
+# Dockerfile.distroless - Ultra minimal using distroless
+FROM python:3.10-slim as builder
+
+WORKDIR /build
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends gcc g++
+RUN pip install --user torch==2.0.0 transformers==4.30.0 fastapi==0.100.0 uvicorn==0.22.0 pydantic==2.0.0
+
+# Production stage
+FROM gcr.io/distroless/python3-debian11
+
+WORKDIR /app
+
+# Copy Python packages from builder
+COPY --from=builder /root/.local /root/.local
+
+# Copy only essential app files
+COPY mood_api_minimal.py .
+
+# Set Python path
+ENV PYTHONPATH=/root/.local/lib/python3.10/site-packages
+
+EXPOSE 8000
+
+CMD ["python", "mood_api_minimal.py"]
