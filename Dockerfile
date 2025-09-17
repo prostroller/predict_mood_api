@@ -1,9 +1,9 @@
-# Ultra-minimal Dockerfile - No ML dependencies
-FROM python:3.10-slim
+# Ultra-minimal Dockerfile - No ML dependencies - Force rebuild
+FROM python:3.10.15-slim
 
 WORKDIR /app
 
-# Install only FastAPI and uvicorn (no gcc needed)
+# Install only FastAPI and uvicorn (no gcc needed) 
 RUN pip install --no-cache-dir fastapi==0.85.0 uvicorn==0.18.0 pydantic==1.10.2
 
 # Copy only API code

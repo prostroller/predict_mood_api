@@ -1,55 +1,36 @@
-# .dockerignore - Exclude everything not needed for production
+# .dockerignore - Exclude everything not needed for minimal API
+
+# All model files and ML dependencies
+model/
+requirements.txt
+requirements_minimal.txt
 
 # Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.Python
-pip-log.txt
-pip-delete-this-directory.txt
-.tox
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.log
-.git
-.mypy_cache
-.pytest_cache
-.hypothesis
 
-# Virtual environments
-venv/
-env/
-ENV/
+# All other API versions
+mood_api.py
+mood_api_minimal.py
+mood_api_remote.py
 
-# IDEs
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Git
-.git/
-.gitignore
-
-# Test files and documentation - EXCLUDE from production
+# Test files and documentation
 test_api.py
+app.py
 README.md
 *.md
 
-# Development files
-.dockerignore
+# Other Dockerfiles
+Dockerfile.*
+
+# Git and development
+.git/
+.gitignore
+.gitattributes
+
+# IDEs and OS
+.vscode/
+.idea/
+.DS_Store
