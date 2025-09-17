@@ -1,1 +1,1 @@
-web: python mood_api_dummy.py
+web: python main.py
