@@ -23,7 +23,14 @@ async def root():
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy", "model_loaded": False, "demo": True}
+    import os
+    return {
+        "status": "healthy", 
+        "model_loaded": False, 
+        "demo": True,
+        "port": os.environ.get("PORT", "8000"),
+        "message": "Ultra-minimal mood detection API is running"
+    }
 
 @app.post("/predict_mood", response_model=PredictionResponse)
 async def predict_mood(input_data: TextInput):
@@ -73,4 +80,5 @@ if __name__ == "__main__":
     import uvicorn
     import os
     port = int(os.environ.get("PORT", 8000))
+    print(f"Starting server on port {port}")
     uvicorn.run(app, host="0.0.0.0", port=port)
