@@ -15,4 +15,5 @@ USER appuser
 
 EXPOSE 8000
 
-CMD ["uvicorn", "mood_api_dummy:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run Python script directly which handles PORT env var
+CMD ["python", "mood_api_dummy.py"]
